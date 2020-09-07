@@ -1,5 +1,6 @@
 {
   "main": "node_modules/expo/AppEntry.js",
+  "proxy":"http://192.168.0.115:5555",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -8,6 +9,8 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "axios": "^0.20.0",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

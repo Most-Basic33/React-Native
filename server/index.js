@@ -2,6 +2,7 @@ require('dotenv').config();
 const path = require('path'),
 express = require('express'),
 session = require('express-session'),
+auth = require('./authController'),
 {SESSION_SECRET, CONNECTION_STRING, SERVER_PORT} = process.env,
 massive = require('massive'),
 app = express();
@@ -31,6 +32,8 @@ massive({
 .then(db =>{
     app.set('db',db)
      
-    console.log('we are connected to our database-Welcome To Port 3333 da player')
+    console.log(`we are connected to our database-Welcome To Port ${SERVER_PORT} da player`)
 })
 
+app.post(`/api/register/`, auth.register)
+app.get(`/api/users/`, auth.getUsers)
