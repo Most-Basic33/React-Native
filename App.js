@@ -1,86 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
-import axios from 'axios'
+import 'react-native-gesture-handler';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Login from './Components/Login';
 
-export default function App() {
-  let url = `http://192.168.0.115:5555/api/`
-
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  console.log(email, 'email')
-  console.log(password, 'password')
-
-  useEffect(() => {
-    axios.get(`${url}users`)
-      .then((res) => {
-        console.log(res.data)
-      }).catch((err) => console.log(err))
-  }, [])
-
-  const register = () => {
-    console.log('hit')
-    let body = { email, password }
-    // console.log(body)
-    axios.post(`${url}register`, body)
-      .then(() => {
-        console.log('done')
-      })
-      .catch(err => {
-        console.log(err, "written error")
-      })
-  }
-  return (
-    
-    <View style={styles.container}>
-      <Text>Login To Continue</Text>
-      <Text>
+const Stack = createStackNavigator();
 
 
-      </Text>
-      <View style={styles.login_parent} >
-        <View style={styles.login_child} >
-          <TextInput
-         clearButtonMode='always'
-            style={styles.textInput}
-            value={email}
-            onChangeText={(text) => setEmail(text)}
+const App = () => {
 
-          />
-          <TextInput
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            textContentType='password'
-            style={styles.textInput} />
-          <Button title='Login' onPress={register} />
-
-        </View>
-      </View>
-    </View>
-  );
+  return(
+    <NavigationContainer>
+   <Stack.Navigator>
+     <Stack.Screen
+     name='Login'
+     component={Login}
+     options={{title: 'Helping People, help people'}}
+      />
+     
+   </Stack.Navigator>
+    </NavigationContainer>
+  )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  login_parent: {
-
-
-  },
-  login_child: {
-
-  },
-  textInput: {
-    padding: 10,
-    borderWidth: 3,
-    margin: 5,
-    fontSize: 20,
-    height: 50,
-    width: 200,
-    borderColor: '#bbb'
-  },
-
-});
+export default App
