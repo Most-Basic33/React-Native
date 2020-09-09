@@ -2,8 +2,10 @@ import React from 'react';
 import MapView from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions, requireNativeComponent } from 'react-native';
 
-export default class Landing extends React.Component {
-  render() {
+const Landing =(props)=> {
+
+    
+  
     return (
         
        
@@ -14,7 +16,7 @@ export default class Landing extends React.Component {
      
     );
   }
-}
+export default Landing
 
 const styles = StyleSheet.create({
   container: {
