@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, requireNativeComponent} from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, requireNativeComponent } from 'react-native';
 import axios from 'axios'
 
-export default function Login({navigation}) {
+export default function Register({ navigation }) {
   let url = `http://192.168.0.115:5555/api/`
 
   const [email, setEmail] = useState('')
@@ -11,45 +11,43 @@ export default function Login({navigation}) {
   console.log(password, 'password')
 
   useEffect(() => {
- 
+
   }, [])
 
-  const login =()=>{
-  let body = {email, password}
+// const login =()=>{
+//   let body = {email, password}
 
-  axios.post(`${url}login`, body)
-  .then(()=>{
-    navigation.navigate('Landing')
-  })
-  .catch((err)=>{
-console.log(err, 'errors pimp')
-  })
-}
-  // const register = () => {
-  //   console.log('hit')
-  //   let body = { email, password }
-  //   // console.log(body)
-  //   axios.post(`${url}register`, body)
-  //     .then(() => {
-  //       navigation.navigate('Landing')
-  //       console.log('done')
-  //     })
-  //     .catch(err => {
-  //       console.log(err, "written error")
-  //     })
-  //}
+//   axios.post(`${url}login`, body)
+//   .then(()=>{
+//     navigation.navigate('Landing')
+//   })
+//   .catch((err)=>{
+// console.log(err, 'errors pimp')
+//   })
+// }
+
+  const register = () => {
+    console.log('hit')
+    let body = { email, password }
+    // console.log(body)
+    axios.post(`${url}register`, body)
+      .then(() => {
+        navigation.navigate('Landing')
+        console.log('done')
+      })
+      .catch(err => {
+        console.log(err, "written error")
+      })
+  }
   return (
-    
+
     <View style={styles.container}>
-      <Text onPress={()=>navigation.navigate('Register')} >Click To Register</Text>
-      <Text>
-
-
-      </Text>
+      <Text onPress={()=>navigation.navigate('Login')} >Click To Login</Text>
+    
       <View style={styles.login_parent} >
         <View style={styles.login_child} >
           <TextInput
-         clearButtonMode='always'
+            clearButtonMode='always'
             style={styles.textInput}
             value={email}
             onChangeText={(text) => setEmail(text)}
@@ -60,10 +58,10 @@ console.log(err, 'errors pimp')
             onChangeText={(text) => setPassword(text)}
             textContentType='password'
             style={styles.textInput} />
-          <Button title='Login' onPress={login} />
+          <Button title='Register' onPress={register} />
 
         </View>
-        <Button onPress={()=>navigation.navigate('Landing')} title='Maps' />
+      
       </View>
     </View>
   );

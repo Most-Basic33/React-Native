@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from './Components/Login';
 import Landing from './Components/Landing'
 import {Button, requireNativeComponent} from 'react-native'
+import Register from './Components/Register'
 
 const Stack = createStackNavigator();
 
@@ -22,6 +23,11 @@ const App = () => {
      <Stack.Screen 
        name='Landing'
        component={Landing}
+     />
+     <Stack.Screen 
+       name='Register'
+       component={Register}
+       options={{title:'Register To Vote, or App'}}
      />
    </Stack.Navigator>
  
