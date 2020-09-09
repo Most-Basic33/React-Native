@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, requireNativeComponent} from 'react-native';
 import axios from 'axios'
 
-export default function Login() {
+export default function Login({navigation}) {
   let url = `http://192.168.0.115:5555/api/`
 
   const [email, setEmail] = useState('')
@@ -11,10 +11,7 @@ export default function Login() {
   console.log(password, 'password')
 
   useEffect(() => {
-    axios.get(`${url}users`)
-      .then((res) => {
-        console.log(res.data)
-      }).catch((err) => console.log(err))
+ 
   }, [])
 
   const register = () => {
@@ -23,6 +20,7 @@ export default function Login() {
     // console.log(body)
     axios.post(`${url}register`, body)
       .then(() => {
+        navigation.navigate('Landing')
         console.log('done')
       })
       .catch(err => {
@@ -54,6 +52,7 @@ export default function Login() {
           <Button title='Login' onPress={register} />
 
         </View>
+        <Button onPress={()=>navigation.navigate('Landing')} title='Maps' />
       </View>
     </View>
   );

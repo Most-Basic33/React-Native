@@ -36,4 +36,5 @@ massive({
 })
 
 app.post(`/api/register/`, auth.register)
+app.post(`/api/login`, auth.login)
 app.get(`/api/users/`, auth.getUsers)
