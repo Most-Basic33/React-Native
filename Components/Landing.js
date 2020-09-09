@@ -5,10 +5,13 @@ import { StyleSheet, Text, View, Dimensions, requireNativeComponent } from 'reac
 export default class Landing extends React.Component {
   render() {
     return (
+        
+       
       <View style={styles.container}>
        
         <MapView style={styles.mapStyle} />
       </View>
+     
     );
   }
 }

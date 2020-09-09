@@ -23,6 +23,7 @@ const App = () => {
      <Stack.Screen 
        name='Landing'
        component={Landing}
+       options={{headerTintColor:'red', title: 'Welcome to the Map pimp'}}
      />
      <Stack.Screen 
        name='Register'

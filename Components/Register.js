@@ -13,18 +13,7 @@ export default function Register({ navigation }) {
   useEffect(() => {
 
   }, [])
-
-// const login =()=>{
-//   let body = {email, password}
-
-//   axios.post(`${url}login`, body)
-//   .then(()=>{
-//     navigation.navigate('Landing')
-//   })
-//   .catch((err)=>{
-// console.log(err, 'errors pimp')
-//   })
-// }
+ 
 
   const register = () => {
     console.log('hit')
@@ -42,7 +31,7 @@ export default function Register({ navigation }) {
   return (
 
     <View style={styles.container}>
-      <Text onPress={()=>navigation.navigate('Login')} >Click To Login</Text>
+      <Text style={{fontSize:20, paddingBottom:20}} onPress={()=>navigation.navigate('Login')} >Click To Login</Text>
     
       <View style={styles.login_parent} >
         <View style={styles.login_child} >
