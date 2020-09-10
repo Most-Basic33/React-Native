@@ -6,6 +6,7 @@ import Login from './Components/Login';
 import Landing from './Components/Landing'
 import {Button, requireNativeComponent} from 'react-native'
 import Register from './Components/Register'
+import Video from './Components/Video'
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 
@@ -56,6 +57,10 @@ console.log(location)
        name='Register'
        component={Register}
        options={{title:'Register To Vote, or App'}}
+     />
+     <Stack.Screen 
+       name='Video'
+       component={Video}
      />
    </Stack.Navigator>
  

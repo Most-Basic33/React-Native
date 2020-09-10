@@ -21,25 +21,13 @@ export default function Login({navigation}) {
  
   axios.post(`${url}login`, body)
   .then(()=>{
-    navigation.navigate('Landing')
+    navigation.navigate('Video')
   })
   .catch((err)=>{
 console.log(err, 'errors pimp')
   })
 }
-  // const register = () => {
-  //   console.log('hit')
-  //   let body = { email, password }
-  //   // console.log(body)
-  //   axios.post(`${url}register`, body)
-  //     .then(() => {
-  //       navigation.navigate('Landing')
-  //       console.log('done')
-  //     })
-  //     .catch(err => {
-  //       console.log(err, "written error")
-  //     })
-  //}
+   
   return (
     
     <View style={styles.container}>
@@ -67,7 +55,7 @@ console.log(err, 'errors pimp')
         <View style={styles.butt}>
 
           <Button title='Login' onPress={login} />
-        <Button style={styles.butt} onPress={()=> LocalAuthentication.authenticateAsync()?navigation.navigate('Landing'):navigation.navigate('Login')} title='Use BioMetrics' />
+        <Button style={styles.butt} onPress={()=> LocalAuthentication.authenticateAsync()?navigation.navigate('Video'):navigation.navigate('Login')} title='Use BioMetrics' />
         </View>
       </View>
     </View>
