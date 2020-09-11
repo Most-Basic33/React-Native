@@ -26,21 +26,15 @@ app.use(session({
     }
 }))
 
-io.on('connection', socket =>{
-    console.log('User Connected');
-   socket.emit('message', 'hello');
-
-    socket.on('message', (message) =>{
-        console.log(message)
-       io.emit('message from server', {message})
-    })
-
-    socket.on('disconnect', () => {
-        console.log('Disconnected')
-    })
-})
 
 
+io.on("connection", socket => {
+    console.log("a user connected :D");
+    socket.on("message", msg => {
+      console.log(msg);
+     io.emit("message", msg);
+    });
+  });
 
 
 
