@@ -1,48 +1,111 @@
 import React, {useState, useEffect} from 'react'
 import {View, Text, TextInput, StyleSheet, Button, ScrollView} from 'react-native'
 import io from 'socket.io-client'
+import queryString from 'query-string'
+
+
+ 
 
 let socket;
 
-const Video = ({navigation}) =>{
+const Video = (props,{navigation}) =>{
     const [message, setMessage] = useState('')
     const [receivedMessages, setReceivedMessages] = useState([])
- 
+    const [room, setRoom] = useState(null)
+    const [roomID, setRoomID] = useState([])
+    const [joined, setJoined] = useState(false)
+    const [name, setName] =useState('')
+  
+
+
 useEffect(()=>{
     socket = io(`http://192.168.0.115:5555`)
  // socket = io.connect()
-socket.on('message', message => {
-    console.log(message)  ,setReceivedMessages(receivedMessages => [...receivedMessages, message])
+socket.on('message from server', message => {
+   setReceivedMessages(receivedMessages => [...receivedMessages, message])
 })
 
 
-},[ ])
+},[])
 
 
-//   const sendMessage = () => {
-//       console.log('hit')
-//       if(message){
-//           socket.emit('messaage', message)
-//         }
-//         console.log(message)
-//   }
+ 
+ 
+useEffect(()=>{
+setRoom(room)
+console.log(props.route.key)
+},[])
+// useEffect(() => {
+     
+//     const { room } = queryString.parse(location.search)
+    
+//     setRoom(room)
+ 
+
+//  }, [location.search])
+
+
+
+useEffect(() =>{
+    socket.on('room joined', rooms =>{
+        joinRoom()
+        if(joined) joinSucess(rooms);
+        setRoomID(rooms)
+       // console.log(rooms)
+    })
+},[])
+
+ 
+ 
+const joinRoom = () => {
+    if(room){
+        socket.emit('join room', {
+            room: room
+        })
+    }
+    
+}
+
+const joinSucess = () => {
+    setJoined(true)
+}
+
+
+
 const sendMessage = () => {
 
-message?socket.emit('message', message):null
+message?socket.emit('message', {name,message, roomID}):null
 console.log('hit')
 }
-//Added for flatlist
-const renderItem = ({ item }) => (
-    <Item title={item.title} />
-  );
+
+
+//console.log(props)
 
     const mappedMessages = receivedMessages.map((message, index) =>{
         return(
-            <Text key={index} style={{borderWidth: 2, width: 200}}>{index}: {message}</Text>
+            <View key={index}> 
+            <Text  style={{borderWidth: 2, width: 200}}>{index}: {message.name}</Text>
+            <Text  style={{borderWidth: 2, width: 200}}>{index}: {message.message}</Text>
+            </View>
         )
     })
 return(
 <View style={styles.container}>
+<TextInput 
+    clearButtonMode='always'
+    style={styles.textInput}
+    value={room}
+    onChangeText={(text) => setRoom(text)}
+/>
+<Button onPress={joinRoom} title='enter room'  />
+<TextInput 
+    clearButtonMode='always'
+    style={styles.textInput}
+    value={name}
+    placeholder='Enter Name'
+    onChangeText={(text) => setName(text)}
+/>
+ 
 <ScrollView>{mappedMessages}
   </ScrollView>
 

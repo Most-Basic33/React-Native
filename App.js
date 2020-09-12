@@ -7,8 +7,11 @@ import Landing from './Components/Landing'
 import {Button, requireNativeComponent} from 'react-native'
 import Register from './Components/Register'
 import Video from './Components/Video'
+import CreateRoom from './Components/CreateRoom'
+import Room from './Components/Room'
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
+
 
 
 
@@ -46,6 +49,7 @@ console.log(location)
      <Stack.Screen
      name='Login'
      component={Login}
+     initialParams='/login'
      options={{title: 'Helping People, help people'}}
       />
      <Stack.Screen 
@@ -62,6 +66,11 @@ console.log(location)
        name='Video'
        component={Video}
      />
+     <Stack.Screen
+     name = 'CreateRoom'
+     component = {CreateRoom}
+      />
+     
    </Stack.Navigator>
  
     </NavigationContainer>
