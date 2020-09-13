@@ -3,6 +3,8 @@ import {View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity}
 import io from 'socket.io-client'
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
+import * as Permissions from 'expo-permissions';
+import * as Contacts from 'expo-contacts';
 
  
 
@@ -20,17 +22,18 @@ const Video = ({navigation}) =>{
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [cameraRef, setCameraRef] = useState('')
     const [recording, setRecording] = useState(false)
+    const [video, setVideo] = useState('a')
 
   
    
-    async function getCamera(){
-        const {status, permissions} = await Permissions.askAsync(Permissions.CAMERA)
-        if(status === 'granted'){
-          return Contacts.getCamera()
-        }else {
-          throw new Error('Contants not granted')
-        }
-      }
+    // async function getCamera(){
+    //     const {status, permissions} = await Permissions.askAsync(Permissions.CAMERA)
+    //     if(status === 'granted'){
+    //       return Contacts.getCamera()
+    //     }else {
+    //       throw new Error('Contants not granted')
+    //     }
+    //   }
     
 // End of Camera code
 
@@ -40,7 +43,7 @@ useEffect(()=>{
 socket.on('message from server', message => {
    setReceivedMessages(receivedMessages => [...receivedMessages, message])
 })
-getCamera()
+//getCamera()
 
 },[])
 
@@ -203,7 +206,7 @@ return(
             >
               <View style={{
                  borderWidth: 2,
-                 borderRadius:"50%",
+                 borderRadius:50,
                  borderColor: recording ? "blue":'red',
                  height: 40,
                  width:40,
@@ -220,12 +223,12 @@ return(
 )
 }
 
-const record = async() =>{
-    if(camera){
+// const record = async() =>{
+//     if(camera){
 
-        let re = await camera.recordAsync()
-    }
-}
+//         let re = await camera.recordAsync()
+//     }
+// }
 
 const styles = StyleSheet.create({
     container: {

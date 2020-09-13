@@ -12,6 +12,8 @@ import Room from './Components/Room'
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import * as Contacts from 'expo-contacts';
+import { Audio } from 'expo-av';
+
 
 
 
@@ -25,7 +27,7 @@ console.log(location)
   useEffect(() => {
     getLocationAsync()
     getContanct()
-    
+    Audio.requestPermissionsAsync()
   }, [])
   // async function alertIfRemoteNotificationsDisabledAsync() {
   //   const { status } = await Permissions.getAsync(Permissions.LOCATION);
