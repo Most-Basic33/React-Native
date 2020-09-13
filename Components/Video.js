@@ -2,12 +2,13 @@ import React, {useState, useEffect} from 'react'
 import {View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity} from 'react-native'
 import io from 'socket.io-client'
 import { Camera } from 'expo-camera';
+import { Ionicons } from '@expo/vector-icons';
 
  
 
 let socket;
 
-const Video = (props,{navigation}) =>{
+const Video = ({navigation}) =>{
     const [message, setMessage] = useState('')
     const [receivedMessages, setReceivedMessages] = useState([])
     const [room, setRoom] = useState(null)
@@ -17,13 +18,11 @@ const Video = (props,{navigation}) =>{
   //Camera only
     const [hasPermission, setHasPermission] = useState(null);
     const [type, setType] = useState(Camera.Constants.Type.back);
+    const [cameraRef, setCameraRef] = useState('')
+    const [recording, setRecording] = useState(false)
+
   
-    // useEffect(() => {
-    //   (async () => {
-    //     const { status } = await Camera.requestPermissionsAsync();
-    //     setHasPermission(status === 'granted');
-    //   })();
-    // }, []);
+   
     async function getCamera(){
         const {status, permissions} = await Permissions.askAsync(Permissions.CAMERA)
         if(status === 'granted'){
@@ -32,12 +31,7 @@ const Video = (props,{navigation}) =>{
           throw new Error('Contants not granted')
         }
       }
-    // if (hasPermission === null) {
-    //   return <View />;
-    // }
-    // if (hasPermission === false) {
-    //   return <Text>No access to camera</Text>;
-    // }
+    
 // End of Camera code
 
 useEffect(()=>{
@@ -55,7 +49,7 @@ getCamera()
  
 useEffect(()=>{
 setRoom(room)
-console.log(props.route.key)
+
 },[])
  
 
@@ -94,6 +88,7 @@ console.log('hit')
 
 //console.log(props)
 
+
     const mappedMessages = receivedMessages.map((message, index) =>{
         return(
             <View key={index}> 
@@ -131,7 +126,12 @@ return(
 />
 <Button onPress={() => sendMessage()} title='send' />
 <View style={{ flex: 1 }}>
-      <Camera style={{ width:350, height:300 }} type={type}>
+      <Camera 
+      ref={ref => {
+        setCameraRef(ref) ;
+  }}
+      style={{ width:350, height:300 }} 
+      type={type}>
         <View
           style={{
             flex: 1,
@@ -151,14 +151,80 @@ return(
                   : Camera.Constants.Type.back
               );
             }}>
-            <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Flip </Text>
+            <Ionicons name={ Platform.OS === 'ios' ? "ios-reverse-camera" : 'md-reverse-camera'} size={40} color="white" />
+            {/* <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Flip </Text> */}
           </TouchableOpacity>
+
+          <TouchableOpacity style={{alignSelf: 'center'}} onPress={async() => {
+            if(cameraRef){
+              let photo = await cameraRef.takePictureAsync();
+              console.log('photo', photo);
+            }
+          }}>
+            <View style={{ 
+               borderWidth: 2,
+               borderRadius:50,
+               borderColor: 'white',
+               height: 50,
+               width:50,
+               display: 'flex',
+               justifyContent: 'center',
+               alignItems: 'center'}}
+            >
+              <View style={{
+                 borderWidth: 2,
+                 borderRadius:50,
+                 borderColor: 'white',
+                 height: 40,
+                 width:40,
+                 backgroundColor: 'white'}} >
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={{alignSelf: 'space-around'}} onPress={async() => {
+              if(!recording){
+                setRecording(true)
+              let video = await cameraRef.recordAsync();
+              console.log('video', video);
+            } else {
+                setRecording(false)
+                cameraRef.stopRecording()
+            }
+          }}>
+            <View style={{ 
+               borderWidth: 2,
+               borderRadius:50,
+               borderColor: 'red',
+               height: 50,
+               width:50,
+               display: 'flex',
+               justifyContent: 'center',
+               alignItems: 'center'}}
+            >
+              <View style={{
+                 borderWidth: 2,
+                 borderRadius:"50%",
+                 borderColor: recording ? "blue":'red',
+                 height: 40,
+                 width:40,
+                 backgroundColor: recording ? "blue":'red'}} >
+              </View>
+            </View>
+          </TouchableOpacity>
+
         </View>
       </Camera> 
     </View>
     </ScrollView>
 </View>
 )
+}
+
+const record = async() =>{
+    if(camera){
+
+        let re = await camera.recordAsync()
+    }
 }
 
 const styles = StyleSheet.create({
