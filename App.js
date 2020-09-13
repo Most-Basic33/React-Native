@@ -11,7 +11,7 @@ import CreateRoom from './Components/CreateRoom'
 import Room from './Components/Room'
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
-
+import * as Contacts from 'expo-contacts';
 
 
 
@@ -24,6 +24,7 @@ const App = () => {
 console.log(location)
   useEffect(() => {
     getLocationAsync()
+    getContanct()
     
   }, [])
   // async function alertIfRemoteNotificationsDisabledAsync() {
@@ -31,7 +32,19 @@ console.log(location)
   //   if (status !== 'granted') {
   //     alert('Hey! You might want to enable Location for my app, they are good.');
   //   }
+ 
   // }
+   
+async function getContanct(){
+  const {status, permissions} = await Permissions.askAsync(Permissions.CONTACTS)
+  if(status === 'granted'){
+    return Contacts.getContactsAsync()
+  }else {
+    throw new Error('Contants not granted')
+  }
+}
+
+
 
   async function getLocationAsync() {
     // permissions returns only for location permissions on iOS and under certain conditions, see Permissions.LOCATION

@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from 'react'
-import {View, Text, TextInput, StyleSheet, Button, ScrollView} from 'react-native'
+import {View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity} from 'react-native'
 import io from 'socket.io-client'
-import queryString from 'query-string'
-
+import { Camera } from 'expo-camera';
 
  
 
@@ -15,8 +14,31 @@ const Video = (props,{navigation}) =>{
     const [roomID, setRoomID] = useState([])
     const [joined, setJoined] = useState(false)
     const [name, setName] =useState('')
+  //Camera only
+    const [hasPermission, setHasPermission] = useState(null);
+    const [type, setType] = useState(Camera.Constants.Type.back);
   
-
+    // useEffect(() => {
+    //   (async () => {
+    //     const { status } = await Camera.requestPermissionsAsync();
+    //     setHasPermission(status === 'granted');
+    //   })();
+    // }, []);
+    async function getCamera(){
+        const {status, permissions} = await Permissions.askAsync(Permissions.CAMERA)
+        if(status === 'granted'){
+          return Contacts.getCamera()
+        }else {
+          throw new Error('Contants not granted')
+        }
+      }
+    // if (hasPermission === null) {
+    //   return <View />;
+    // }
+    // if (hasPermission === false) {
+    //   return <Text>No access to camera</Text>;
+    // }
+// End of Camera code
 
 useEffect(()=>{
     socket = io(`http://192.168.0.115:5555`)
@@ -24,7 +46,7 @@ useEffect(()=>{
 socket.on('message from server', message => {
    setReceivedMessages(receivedMessages => [...receivedMessages, message])
 })
-
+getCamera()
 
 },[])
 
@@ -35,16 +57,7 @@ useEffect(()=>{
 setRoom(room)
 console.log(props.route.key)
 },[])
-// useEffect(() => {
-     
-//     const { room } = queryString.parse(location.search)
-    
-//     setRoom(room)
  
-
-//  }, [location.search])
-
-
 
 useEffect(() =>{
     socket.on('room joined', rooms =>{
@@ -107,7 +120,7 @@ return(
 />
  
 <ScrollView>{mappedMessages}
-  </ScrollView>
+ 
 
 <Text  style={{fontSize:20, padding:10}} onPress={()=>navigation.navigate('Landing')} >Click for maps</Text>
 <TextInput 
@@ -117,7 +130,33 @@ return(
     onChangeText={(text) => setMessage(text)}
 />
 <Button onPress={() => sendMessage()} title='send' />
- 
+<View style={{ flex: 1 }}>
+      <Camera style={{ width:350, height:300 }} type={type}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'transparent',
+            flexDirection: 'row',
+          }}>
+          <TouchableOpacity
+            style={{
+              flex: 0.1,
+              alignSelf: 'flex-end',
+              alignItems: 'center',
+            }}
+            onPress={() => {
+              setType(
+                type === Camera.Constants.Type.back
+                  ? Camera.Constants.Type.front
+                  : Camera.Constants.Type.back
+              );
+            }}>
+            <Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Flip </Text>
+          </TouchableOpacity>
+        </View>
+      </Camera> 
+    </View>
+    </ScrollView>
 </View>
 )
 }
@@ -128,6 +167,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+       
       
     },
     textInput: {
