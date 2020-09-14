@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react'
-import {View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity} from 'react-native'
+import {View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity, Image} from 'react-native'
 import io from 'socket.io-client'
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
-
+import Thumb from './Thumb'
  
 
 let socket;
@@ -22,19 +22,12 @@ const Video = ({navigation}) =>{
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [cameraRef, setCameraRef] = useState('')
     const [recording, setRecording] = useState(false)
-    const [video, setVideo] = useState('a')
+    const [videos, setVideo] = useState([])
+    const [photos, setPhotos] = useState([])
 
   
    
-    // async function getCamera(){
-    //     const {status, permissions} = await Permissions.askAsync(Permissions.CAMERA)
-    //     if(status === 'granted'){
-    //       return Contacts.getCamera()
-    //     }else {
-    //       throw new Error('Contants not granted')
-    //     }
-    //   }
-    
+   
 // End of Camera code
 
 useEffect(()=>{
@@ -88,8 +81,7 @@ message?socket.emit('message', {name,message, roomID}):null
 console.log('hit')
 }
 
-
-//console.log(props)
+//Mapped URI from video object
 
 
     const mappedMessages = receivedMessages.map((message, index) =>{
@@ -133,7 +125,7 @@ return(
       ref={ref => {
         setCameraRef(ref) ;
   }}
-      style={{ width:350, height:300 }} 
+      style={{ width:350, height:300, paddingBottom:20 }} 
       type={type}>
         <View
           style={{
@@ -161,7 +153,8 @@ return(
           <TouchableOpacity style={{alignSelf: 'center'}} onPress={async() => {
             if(cameraRef){
               let photo = await cameraRef.takePictureAsync();
-              console.log('photo', photo);
+              console.log('photo', photo.uri);
+              setPhotos(photos.uri)
             }
           }}>
             <View style={{ 
@@ -189,6 +182,7 @@ return(
                 setRecording(true)
               let video = await cameraRef.recordAsync();
               console.log('video', video);
+              setVideo(video)
             } else {
                 setRecording(false)
                 cameraRef.stopRecording()
@@ -218,6 +212,8 @@ return(
         </View>
       </Camera> 
     </View>
+    <Image />
+    <Thumb  style={{padding:20, height:200, width:200}} photo={photos} videos={videos} />
     </ScrollView>
 </View>
 )
@@ -236,6 +232,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+        overflow:'scroll'
        
       
     },

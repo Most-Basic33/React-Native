@@ -25,6 +25,7 @@
     "expo-permissions": "^9.1.0",
     "expo-sensors": "~9.0.1",
     "expo-status-bar": "^1.0.2",
+    "expo-video-thumbnails": "~4.2.1",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "install": "^0.13.0",
