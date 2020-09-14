@@ -5,8 +5,9 @@ import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
-import Thumb from './Thumb'
- 
+//import Thumb from './Thumb'
+import * as VideoThumbnails from 'expo-video-thumbnails';
+
 
 let socket;
 
@@ -24,8 +25,23 @@ const Video = ({navigation}) =>{
     const [recording, setRecording] = useState(false)
     const [videos, setVideo] = useState([])
     const [photos, setPhotos] = useState([])
+//thumb
+const [image, setImage] = useState('null')
 
-  
+const generateThumbnail = async () => {
+  try {
+    const { uri } = await VideoThumbnails.getThumbnailAsync(
+   videos.uri,
+      {
+        time: 15000,
+      }
+    );
+  setImage({image: uri });
+  } catch (e) {
+    console.warn(e);
+  }
+};
+//thumb over
    
    
 // End of Camera code
@@ -72,7 +88,6 @@ const joinRoom = () => {
 const joinSucess = () => {
     setJoined(true)
 }
-
 
 
 const sendMessage = () => {
@@ -154,7 +169,7 @@ return(
             if(cameraRef){
               let photo = await cameraRef.takePictureAsync();
               console.log('photo', photo.uri);
-              setPhotos(photos.uri)
+              setPhotos(photo)
             }
           }}>
             <View style={{ 
@@ -181,8 +196,8 @@ return(
               if(!recording){
                 setRecording(true)
               let video = await cameraRef.recordAsync();
-              console.log('video', video);
-              setVideo(video)
+              console.log('video', video.uri);
+              setVideo(video.uri)
             } else {
                 setRecording(false)
                 cameraRef.stopRecording()
@@ -210,10 +225,14 @@ return(
           </TouchableOpacity>
 
         </View>
-      </Camera> 
+      </Camera>  
     </View>
     <Image />
-    <Thumb  style={{padding:20, height:200, width:200}} photo={photos} videos={videos} />
+    <Button onPress={generateThumbnail} title="Generate thumbnail" />
+        {image && <Image source={image} style={{ width: 200, height: 200 }} />}
+    {/* <Thumb  style={{padding:20, height:200, width:200}} photo={photos} videos={videos} /> */}
+    <Image source={photos} style={{width:300, height:300, resizeMode:'contain'}} />
+
     </ScrollView>
 </View>
 )
