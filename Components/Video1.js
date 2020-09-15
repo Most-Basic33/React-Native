@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity, Image} from 'react-native'
+import {View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity, Image } from 'react-native'
 import io from 'socket.io-client'
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,11 +7,13 @@ import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
 //import Thumb from './Thumb'
 import * as VideoThumbnails from 'expo-video-thumbnails';
+ import { Video } from 'expo-av';
+
 
 
 let socket;
 
-const Video = ({navigation}) =>{
+const Video1 = ({navigation}) =>{
     const [message, setMessage] = useState('')
     const [receivedMessages, setReceivedMessages] = useState([])
     const [room, setRoom] = useState(null)
@@ -23,8 +25,8 @@ const Video = ({navigation}) =>{
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [cameraRef, setCameraRef] = useState('')
     const [recording, setRecording] = useState(false)
-    const [videos, setVideo] = useState([])
-    const [photos, setPhotos] = useState([])
+    const [videos, setVideo] = useState(null)
+    const [photos, setPhotos] = useState(null)
 //thumb
 const [image, setImage] = useState('null')
 
@@ -228,11 +230,21 @@ return(
       </Camera>  
     </View>
     <Image />
-    <Button onPress={generateThumbnail} title="Generate thumbnail" />
-        {image && <Image source={image} style={{ width: 200, height: 200 }} />}
+    {/* <Button onPress={generateThumbnail} title="Generate thumbnail" />
+        {image && <Image source={image} style={{ width: 200, height: 200 }} />} */}
     {/* <Thumb  style={{padding:20, height:200, width:200}} photo={photos} videos={videos} /> */}
     <Image source={photos} style={{width:300, height:300, resizeMode:'contain'}} />
-
+    <Video
+  source={{ uri: videos }}
+  rate={1.0}
+  volume={1.0}
+  isMuted={false}
+  resizeMode="cover"
+  shouldPlay
+  isLooping
+  useNativeControls={true}
+  style={{ width: 300, height: 300 }}
+/>
     </ScrollView>
 </View>
 )
@@ -271,4 +283,4 @@ const styles = StyleSheet.create({
         justifyContent:'space-between'  
     }
 })
-export default Video
+export default Video1
