@@ -1,6 +1,6 @@
 {
   "main": "node_modules/expo/AppEntry.js",
-  "proxy": "http://192.168.0.115:5555",
+  "proxy": "http://192.168.1.247:5555",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -20,9 +20,10 @@
     "expo": "~38.0.8",
     "expo-av": "~8.2.1",
     "expo-camera": "~8.3.1",
+    "expo-constants": "~9.1.1",
     "expo-contacts": "~8.2.1",
     "expo-local-authentication": "~9.1.1",
-    "expo-permissions": "^9.1.0",
+    "expo-permissions": "~9.0.1",
     "expo-sensors": "~9.0.1",
     "expo-status-bar": "^1.0.2",
     "expo-video-thumbnails": "~4.2.1",
