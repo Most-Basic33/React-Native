@@ -107,7 +107,10 @@ console.log('hit')
 }
 //Attempted to send message through sockets
 const sendMessage = () => {
-
+if(!roomID.length){ 
+  alert('must join room' )
+  return
+}
 message?socket.emit('message', {name,message, roomID}):null
 console.log('hit')
 }
@@ -130,6 +133,7 @@ return(
 <View style={styles.container}>
 <TextInput 
     clearButtonMode='always'
+    
     style={styles.textInput}
     value={room}
     onChangeText={(text) => setRoom(text)}
