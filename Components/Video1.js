@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity, Image} from 'react-native'
+import {View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity, Image } from 'react-native'
 import io from 'socket.io-client'
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,13 +7,16 @@ import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
 //import Thumb from './Thumb'
 import * as VideoThumbnails from 'expo-video-thumbnails';
+ import { Video } from 'expo-av';
+
 
 
 let socket;
 
-const Video = ({navigation}) =>{
+const Video1 = ({navigation}) =>{
     const [message, setMessage] = useState('')
     const [receivedMessages, setReceivedMessages] = useState([])
+    const[receivedVideo, setReceivedVideo] = useState([])
     const [room, setRoom] = useState(null)
     const [roomID, setRoomID] = useState([])
     const [joined, setJoined] = useState(false)
@@ -23,26 +26,12 @@ const Video = ({navigation}) =>{
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [cameraRef, setCameraRef] = useState('')
     const [recording, setRecording] = useState(false)
-    const [videos, setVideo] = useState([])
-    const [photos, setPhotos] = useState([])
-//thumb
-const [image, setImage] = useState('null')
+    const [videos, setVideo] = useState([])//I get invalid prop type unless i set this to null but then I get other problems
+    const [photos, setPhotos] = useState(null)
 
-const generateThumbnail = async () => {
-  try {
-    const { uri } = await VideoThumbnails.getThumbnailAsync(
-   videos.uri,
-      {
-        time: 15000,
-      }
-    );
-  setImage({image: uri });
-  } catch (e) {
-    console.warn(e);
-  }
-};
-//thumb over
-   
+     
+
+    let mapped = []
    
 // End of Camera code
 
@@ -56,14 +45,32 @@ socket.on('message from server', message => {
 
 },[])
 
-
+console.log(videos.length,'video')
  
+//Attempted useEffect to receive Videos
+useEffect(()=>{
+socket.on('message data', videos=> {
+  setReceivedVideo(receivedVideo => [...receivedVideo, videos])
+})
+console.log(receivedVideo, 'received')
+
+
+
+},[])
  
 useEffect(()=>{
 setRoom(room)
 
-},[])
+},[room])
  
+// useEffect(()=>{
+// if(videos ===  ''){
+// setVideo(null)
+// }
+
+// },[videos === null])
+
+
 
 useEffect(() =>{
     socket.on('room joined', rooms =>{
@@ -74,7 +81,11 @@ useEffect(() =>{
     })
 },[])
 
- 
+
+ const removeVideo=()=>{
+   setVideo('')
+   console.log(videos)
+ }
  
 const joinRoom = () => {
     if(room){
@@ -88,8 +99,13 @@ const joinRoom = () => {
 const joinSucess = () => {
     setJoined(true)
 }
+//Attempted to send video thru sockets
+const sendVideo = () =>{
+ socket.emit('message sent', {videos, roomID}) 
+console.log('hit')
 
-
+}
+//Attempted to send message through sockets
 const sendMessage = () => {
 
 message?socket.emit('message', {name,message, roomID}):null
@@ -98,7 +114,10 @@ console.log('hit')
 
 //Mapped URI from video object
 
+  mapped = String(receivedVideo.map(video=>video.videos))
+  console.log(mapped )
 
+  
     const mappedMessages = receivedMessages.map((message, index) =>{
         return(
             <View key={index}> 
@@ -126,7 +145,17 @@ return(
  
 <ScrollView>{mappedMessages}
  
-
+{/* <Video
+  source={{  uri: mapped}}
+  rate={1.0}
+  volume={1.0}
+  isMuted={false}
+  resizeMode="cover"
+  shouldPlay
+  isLooping
+  useNativeControls={true}
+  style={{ width: 300, height: 300  }}
+/> */}
 <Text  style={{fontSize:20, padding:10}} onPress={()=>navigation.navigate('Landing')} >Click for maps</Text>
 <TextInput 
     clearButtonMode='always'
@@ -134,7 +163,9 @@ return(
     value={message}
     onChangeText={(text) => setMessage(text)}
 />
-<Button onPress={() => sendMessage()} title='send' />
+<Button onPress={() => sendVideo()} title='send Video' />
+
+<Button onPress={() => sendMessage()} title='send message'  style={{gap:10}}/>
 <View style={{ flex: 1 }}>
       <Camera 
       ref={ref => {
@@ -181,6 +212,7 @@ return(
                display: 'flex',
                justifyContent: 'center',
                alignItems: 'center'}}
+               
             >
               <View style={{
                  borderWidth: 2,
@@ -227,12 +259,20 @@ return(
         </View>
       </Camera>  
     </View>
-    <Image />
-    <Button onPress={generateThumbnail} title="Generate thumbnail" />
-        {image && <Image source={image} style={{ width: 200, height: 200 }} />}
-    {/* <Thumb  style={{padding:20, height:200, width:200}} photo={photos} videos={videos} /> */}
-    <Image source={photos} style={{width:300, height:300, resizeMode:'contain'}} />
-
+ 
+    <Video
+  source={{  uri: videos }}
+  rate={1.0}
+  volume={1.0}
+  isMuted={false}
+  resizeMode="cover"
+  shouldPlay
+  isLooping
+  useNativeControls={true}
+  style={{ width: 300, height: 300  }}
+/>
+<Button onPress={()=>removeVideo()} style={{width:150, height:150, resizeMode:'contain'}} title='Delete Video' />
+<Image source={photos} style={{width:150, height:150, resizeMode:'contain'}} />
     </ScrollView>
 </View>
 )
@@ -269,6 +309,9 @@ const styles = StyleSheet.create({
         height:100,
         width:200,
         justifyContent:'space-between'  
+    },
+    butts: {
+      
     }
 })
-export default Video
+export default Video1

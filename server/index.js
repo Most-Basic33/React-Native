@@ -131,6 +131,12 @@ app.use(session({
     //  if(!data && !data.roomId && !data.roomId.rooms && !data.roomId.rooms[1]) return;
     //    io.to(data.roomId.rooms[1]).emit('message data', {data: data.data});
     // })
+    socket.on('message sent',({ videos, roomID}) => {
+      console.log(videos, roomID)
+     // socket.broadcast.emit('message dispatched', data.message);
+     if(!roomID && !roomID.rooms && !roomID.rooms[1]) return;
+       io.in(roomID.rooms[1]).emit('message data', { videos});
+    })
   
    
     // socket.on('message sent', data => {
