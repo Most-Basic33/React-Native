@@ -5,6 +5,7 @@ session = require('express-session'),
 auth = require('./authController'),
 {SESSION_SECRET, CONNECTION_STRING, SERVER_PORT} = process.env,
 massive = require('massive'),
+fs = require('fs'),
 app = express();
 
 const bodyParser = require('body-parser'),
@@ -136,6 +137,11 @@ app.use(session({
      // socket.broadcast.emit('message dispatched', data.message);
      if(!roomID && !roomID.rooms && !roomID.rooms[1]) return;
        io.in(roomID.rooms[1]).emit('message data', { videos});
+
+       fs.copyFile('source.txt', 'destination.txt', (err) => {
+        if (err) throw err;
+        console.log('source.txt was copied to destination.txt');
+      });
     })
   
    

@@ -36,7 +36,7 @@ const Video1 = ({navigation}) =>{
 // End of Camera code
 
 useEffect(()=>{
-    socket = io(`http://192.168.0.115:5555`)
+   socket = io(`http://192.168.0.115:5555`)
  // socket = io.connect()
 socket.on('message from server', message => {
    setReceivedMessages(receivedMessages => [...receivedMessages, message])
@@ -101,13 +101,17 @@ const joinSucess = () => {
 }
 //Attempted to send video thru sockets
 const sendVideo = () =>{
+  if(roomID.length < 1){ 
+    alert('must join room' )
+    return
+  }
  socket.emit('message sent', {videos, roomID}) 
 console.log('hit')
 
 }
 //Attempted to send message through sockets
 const sendMessage = () => {
-if(!roomID.length){ 
+if(roomID.length < 1){ 
   alert('must join room' )
   return
 }
