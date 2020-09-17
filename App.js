@@ -6,7 +6,7 @@ import Login from './Components/Login';
 import Landing from './Components/Landing'
 import {Button, requireNativeComponent} from 'react-native'
 import Register from './Components/Register'
-import Video from './Components/Video'
+import Video1 from './Components/Video1'
 import CreateRoom from './Components/CreateRoom'
 import Room from './Components/Room'
 import * as Permissions from 'expo-permissions';
@@ -79,7 +79,7 @@ async function getContanct(){
      />
      <Stack.Screen 
        name='Video'
-       component={Video}
+       component={Video1}
      />
      <Stack.Screen
      name = 'CreateRoom'
