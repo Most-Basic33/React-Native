@@ -5,7 +5,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import {connect} from 'react-redux'
 import {getUser} from './../redux/videoReducer'
 
-export default function Login({navigation}) {
+ function Login({navigation}) {
   let url = `http://192.168.0.115:5555/api/`
 
   const [email, setEmail] = useState('')
@@ -22,7 +22,9 @@ export default function Login({navigation}) {
   let body = {email, password}
  
   axios.post(`${url}login`, body)
-  .then(()=>{
+  .then((res)=>{
+    
+      props.getUser(res)
     navigation.navigate('Video')
   })
   .catch((err)=>{
@@ -63,6 +65,10 @@ console.log(err, 'errors pimp')
     </View>
   );
 }
+ 
+   
+
+export default connect(null,{getUser})(Login)
 
 const styles = StyleSheet.create({
   container: {

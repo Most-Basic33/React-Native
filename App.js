@@ -13,6 +13,8 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import * as Contacts from 'expo-contacts';
 import { Audio } from 'expo-av';
+import store from './redux/store'
+import {Provider} from 'react-redux'
 
 
 
@@ -59,6 +61,9 @@ async function getContanct(){
   }
 
   return(
+    <Provider store={store}>
+
+   
     <NavigationContainer>
    <Stack.Navigator>
      <Stack.Screen
@@ -89,6 +94,7 @@ async function getContanct(){
    </Stack.Navigator>
  
     </NavigationContainer>
+    </Provider>
   )
 }
 export default App
