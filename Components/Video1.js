@@ -29,8 +29,8 @@ const Video1 = ({navigation}) =>{
     const [videos, setVideo] = useState([])//I get invalid prop type unless i set this to null but then I get other problems
     const [photos, setPhotos] = useState(null)
 
-     
-
+     const [playVid, setPlayVid] = useState('')
+ const[recveidVid, setReceivedVid] = useState(false)
     let mapped = []
    
 // End of Camera code
@@ -52,12 +52,10 @@ useEffect(()=>{
 socket.on('message data', videos=> {
   setReceivedVideo(receivedVideo => [...receivedVideo, videos])
 })
-console.log(receivedVideo, 'received')
-
 
 
 },[])
- 
+console.log(receivedVideo, 'received')
 useEffect(()=>{
 setRoom(room)
 
@@ -124,7 +122,10 @@ console.log('hit')
   mapped = String(receivedVideo.map(video=>video.videos))
   console.log(mapped )
 
-  
+  const playVideo=()=>{
+setPlayVid(mapped)
+setReceivedVid(true)
+  }
     const mappedMessages = receivedMessages.map((message, index) =>{
         return(
             <View key={index}> 
@@ -150,11 +151,15 @@ return(
     placeholder='Enter Name'
     onChangeText={(text) => setName(text)}
 />
- 
+<View style={{backgroundColor:recveidVid?'blue':'red'}}>
+<Text>Play Vidz</Text>
+ <Button
+  onPress={()=>playVideo()} title='play Vidz'/>
+</View>
 <ScrollView>{mappedMessages}
  
-{/* <Video
-  source={{  uri: mapped}}
+<Video
+  source={{  uri: playVid}}
   rate={1.0}
   volume={1.0}
   isMuted={false}
@@ -163,7 +168,7 @@ return(
   isLooping
   useNativeControls={true}
   style={{ width: 300, height: 300  }}
-/> */}
+/>
 <Text  style={{fontSize:20, padding:10}} onPress={()=>navigation.navigate('Landing')} >Click for maps</Text>
 <TextInput 
     clearButtonMode='always'

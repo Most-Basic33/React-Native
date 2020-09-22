@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, requireNativeComponent} from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button} from 'react-native';
 import axios from 'axios'
 import * as LocalAuthentication from 'expo-local-authentication';
+import {connect} from 'react-redux'
+import {getUser} from './../redux/videoReducer'
 
 export default function Login({navigation}) {
   let url = `http://192.168.0.115:5555/api/`

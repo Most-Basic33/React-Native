@@ -138,10 +138,7 @@ app.use(session({
      if(!roomID && !roomID.rooms && !roomID.rooms[1]) return;
        io.in(roomID.rooms[1]).emit('message data', { videos});
 
-       fs.copyFile('source.txt', 'destination.txt', (err) => {
-        if (err) throw err;
-        console.log('source.txt was copied to destination.txt');
-      });
+       
     })
   
    
@@ -172,3 +169,4 @@ massive({
 app.post(`/api/register/`, auth.register)
 app.post(`/api/login`, auth.login)
 app.get(`/api/users/`, auth.getUsers)
+app.get('/api/me', auth.logMeIn)

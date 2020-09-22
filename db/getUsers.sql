@@ -1,1 +1,1 @@
-select * from uber_clone;
+select * from accounts;
