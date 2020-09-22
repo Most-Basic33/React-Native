@@ -24,7 +24,7 @@ import {getUser} from './../redux/videoReducer'
   axios.post(`${url}login`, body)
   .then((res)=>{
     
-      props.getUser(res)
+       getUser(res.data)
     navigation.navigate('Video')
   })
   .catch((err)=>{
