@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import MapView ,{Marker} from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions, requireNativeComponent } from 'react-native';
 import * as Location from 'expo-location';
+import { add } from 'react-native-reanimated';
 
 
 
@@ -11,6 +12,7 @@ const Landing =(props)=> {
     const [errorMsg, setErrorMsg] = useState(null);
     const [markers, setMarkers] = useState([])
     const [latlng, setLatLng] = useState('')
+    const [address, setAddress] = useState([])
   
   const [long, setLong] = useState('')
   const [lat, setLat] = useState('')
@@ -30,6 +32,9 @@ title={marker.title}
   })
     console.log(location)
 
+
+
+
     useEffect(() => {
       (async () => {
         let { status } = await Location.requestPermissionsAsync();
@@ -39,12 +44,24 @@ title={marker.title}
   
        let  location = await Location.getCurrentPositionAsync({});
         setLocation(location);
-     setLat(location?.coords.latitude)
-    setLong(location?.coords.longitude)
+     setLat(+location?.coords.latitude)
+    setLong(+location?.coords.longitude)
     setLatLng({lat, long})
+
+    let address = await Location.reverseGeocodeAsync({latitude:lat, longitude:long})
+    setAddress(address)
+    console.log(address)
+alertAddy()
+
       })();
-    },[location]);
+    },[ ]);
   
+
+function alertAddy(){
+  alert(JSON.stringify(address))
+}    
+    
+ console.log(address, "console.log")
 
     let text = 'Waiting..';
     if (errorMsg) {
@@ -73,7 +90,8 @@ title={marker.title}
        
       <View style={styles.container}>
        <Text>Longitude:{long}</Text>
-          <Text>Latitude:{lat}</Text>
+          <Text>Latitude:{lat}  </Text>
+    
         <MapView
            style={styles.mapStyle}
            initialRegion={{

@@ -19,6 +19,7 @@ import {getUser} from './../redux/videoReducer'
   }, [])
 
   const login =()=>{
+    console.log('hit login')
   let body = {email, password}
  
   axios.post(`${url}login`, body)
@@ -58,17 +59,17 @@ console.log(err, 'errors pimp')
         </View>
         <View style={styles.butt}>
 
-          <Button title='Login' onPress={login} />
-        <Button style={styles.butt} onPress={()=> LocalAuthentication.authenticateAsync()?navigation.navigate('Video'):navigation.navigate('Login')} title='Use BioMetrics' />
+          <Button title='Login' onPress={()=>login()} />
+        <Button  onPress={()=> LocalAuthentication.authenticateAsync()?navigation.navigate('Video'):navigation.navigate('Login')} title='Use BioMetrics' />
         </View>
       </View>
     </View>
   );
 }
- 
+ const mapStatetoProps = state => state
    
 
-export default connect(null,{getUser})(Login)
+export default connect(mapStatetoProps,{getUser})(Login)
 
 const styles = StyleSheet.create({
   container: {
@@ -95,9 +96,11 @@ const styles = StyleSheet.create({
   },
   butt: {
    alignContent:'center',
+   paddingTop:10,
    height:100,
    width:200,
-   justifyContent:'space-between'
+   justifyContent:'space-between',
+   
 
     
 

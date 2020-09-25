@@ -8,19 +8,25 @@ import * as Contacts from 'expo-contacts';
 //import Thumb from './Thumb'
 import * as VideoThumbnails from 'expo-video-thumbnails';
  import { Video } from 'expo-av';
+ import {connect} from 'react-redux'
+ import axios from 'axios'
+ import {getUser} from './../redux/videoReducer'
 
 
 
 let socket;
+let url = `http://192.168.0.115:5555/api/`;
 
-const Video1 = ({navigation}) =>{
+
+const Video1 = (props) =>{
+
     const [message, setMessage] = useState('')
     const [receivedMessages, setReceivedMessages] = useState([])
     const[receivedVideo, setReceivedVideo] = useState([])
     const [room, setRoom] = useState(null)
     const [roomID, setRoomID] = useState([])
     const [joined, setJoined] = useState(false)
-    const [name, setName] =useState('')
+    const [name, setName] = useState('')
   //Camera only
     const [hasPermission, setHasPermission] = useState(null);
     const [type, setType] = useState(Camera.Constants.Type.back);
@@ -34,6 +40,12 @@ const Video1 = ({navigation}) =>{
     let mapped = []
    
 // End of Camera code
+useEffect(()=>{
+axios.get(`${url}me`).then((res)=>{
+  console.log(res.data)
+  props.getUser(res.data)
+})
+},[])
 
 useEffect(()=>{
    socket = io(`http://192.168.0.115:5555`)
@@ -134,11 +146,12 @@ setReceivedVid(true)
             </View>
         )
     })
+    console.log(props)
 return(
 <View style={styles.container}>
 <TextInput 
     clearButtonMode='always'
-    
+    placeholder='Choose Room'
     style={styles.textInput}
     value={room}
     onChangeText={(text) => setRoom(text)}
@@ -169,7 +182,7 @@ return(
   useNativeControls={true}
   style={{ width: 300, height: 300  }}
 />
-<Text  style={{fontSize:20, padding:10}} onPress={()=>navigation.navigate('Landing')} >Click for maps</Text>
+<Text  style={{fontSize:20, padding:10}} onPress={()=>props.navigation.navigate('Landing')} >Click for maps</Text>
 <TextInput 
     clearButtonMode='always'
     style={styles.textInput}
@@ -178,7 +191,7 @@ return(
 />
 <Button onPress={() => sendVideo()} title='send Video' />
 
-<Button onPress={() => sendMessage()} title='send message'  style={{gap:10}}/>
+<Button onPress={() => sendMessage()} title='send message' style={{gap:10}}/>
 <View style={{ flex: 1 }}>
       <Camera 
       ref={ref => {
@@ -274,7 +287,7 @@ return(
     </View>
  
     <Video
-  source={{  uri: videos }}
+  src={{  uri: videos }}
   rate={1.0}
   volume={1.0}
   isMuted={false}
@@ -297,6 +310,7 @@ return(
 //         let re = await camera.recordAsync()
 //     }
 // }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -327,4 +341,21 @@ const styles = StyleSheet.create({
       
     }
 })
-export default Video1
+
+const mapStateToProps = state => {
+ console.log(state.user)
+  return{
+    user: state.user
+  }
+}
+// };
+// const mapStateToProps = (state) => {
+//   const { user } = state
+//   return { user }
+// };
+   
+   
+
+
+export default connect(mapStateToProps,{getUser})(Video1)
+
