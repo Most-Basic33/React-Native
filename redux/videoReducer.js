@@ -1,10 +1,18 @@
 const initialState = {
     user: {},
-    video: {}
+    location:{}
 }
 
 const GET_USER = 'GET_USER';
+const GET_LOCATION = 'GET_LOCATION';
  
+export function getLocation(location){
+    console.log(location, "redux!!")
+    return{
+        type: GET_LOCATION,
+        payload: location
+    }
+}
 
 
  export function getUser(user) {
@@ -23,7 +31,9 @@ export default function reducer(state = initialState, action) {
         case GET_USER:
             console.log(payload)
             return {...state, user: payload}
-                
+                case GET_LOCATION:
+                    console.log(payload)
+                    return {...state, location:payload}
             default:
                 return state
     }

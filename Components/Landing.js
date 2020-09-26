@@ -3,7 +3,8 @@ import MapView ,{Marker} from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions, requireNativeComponent } from 'react-native';
 import * as Location from 'expo-location';
 import { add } from 'react-native-reanimated';
-
+import {getLocation} from '../redux/videoReducer'
+import {connect} from 'react-redux'
 
 
 const Landing =(props)=> {
@@ -12,7 +13,7 @@ const Landing =(props)=> {
     const [errorMsg, setErrorMsg] = useState(null);
     const [markers, setMarkers] = useState([])
     const [latlng, setLatLng] = useState('')
-    const [address, setAddress] = useState([])
+    const [address, setAddress] = useState(null)
   
   const [long, setLong] = useState('')
   const [lat, setLat] = useState('')
@@ -42,20 +43,21 @@ title={marker.title}
           setErrorMsg('Permission to access location was denied');
         }
   
-       let  location = await Location.getCurrentPositionAsync({});
+       let  location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.BestForNavigation});
         setLocation(location);
+        props.getLocation(location)
      setLat(+location?.coords.latitude)
     setLong(+location?.coords.longitude)
     setLatLng({lat, long})
 
-    let address = await Location.reverseGeocodeAsync({latitude:lat, longitude:long})
+    let address = await Location.reverseGeocodeAsync({latitude:+lat, longitude:+long})
     setAddress(address)
     console.log(address)
-alertAddy()
+//alertAddy()
 
       })();
     },[ ]);
-  
+  //What to put in the brackets to make it updata address whenever the address changes
 
 function alertAddy(){
   alert(JSON.stringify(address))
@@ -91,7 +93,7 @@ function alertAddy(){
       <View style={styles.container}>
        <Text>Longitude:{long}</Text>
           <Text>Latitude:{lat}  </Text>
-    
+    <Text>{JSON.stringify(address)}</Text>
         <MapView
            style={styles.mapStyle}
            initialRegion={{
@@ -109,7 +111,14 @@ function alertAddy(){
      
     );
   }
-export default Landing
+
+const mapStateToProps = state =>{
+  return{
+    location: state.location
+  }
+}
+
+export default connect(mapStateToProps,{getLocation})(Landing)
 
 const styles = StyleSheet.create({
   container: {
