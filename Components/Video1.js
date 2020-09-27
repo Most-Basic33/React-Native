@@ -106,6 +106,7 @@ const joinRoom = () => {
     
 }
 
+
 const joinSucess = () => {
     setJoined(true)
 }
@@ -146,7 +147,16 @@ setReceivedVid(true)
             </View>
         )
     })
-    console.log(props)
+    
+    const alertAddy=()=>{
+      alert(props.location.coords.latitude)
+    }
+
+
+// useEffect(()=>{
+// props.location?alert(props.location):null
+// },[props.location])
+console.log(props, "VIDEO!!!")
 return(
 <View style={styles.container}>
 <TextInput 
@@ -189,6 +199,8 @@ return(
     value={message}
     onChangeText={(text) => setMessage(text)}
 />
+<Button title='location' onPress={()=>alertAddy()} />
+
 <Button onPress={() => sendVideo()} title='send Video' />
 
 <Button onPress={() => sendMessage()} title='send message' style={{gap:10}}/>
@@ -345,7 +357,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
  console.log(state.user)
   return{
-    user: state.user
+    user: state.user,
+    location: state.location
   }
 }
 // };

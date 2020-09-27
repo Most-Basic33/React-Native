@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import MapView ,{Marker} from 'react-native-maps';
 import { StyleSheet, Text, View, Dimensions, requireNativeComponent } from 'react-native';
 import * as Location from 'expo-location';
-import { add } from 'react-native-reanimated';
 import {getLocation} from '../redux/videoReducer'
 import {connect} from 'react-redux'
 
@@ -26,7 +25,7 @@ const Landing =(props)=> {
   let mappedMarker = markers.map((marker, index) =>{
     return(
 <Marker
-coordinate={marker.latlng}
+coordinate={marker.location}
 title={marker.title}
  />
     )
@@ -52,18 +51,18 @@ title={marker.title}
 
     let address = await Location.reverseGeocodeAsync({latitude:+lat, longitude:+long})
     setAddress(address)
-    console.log(address)
+   // console.log(address)
 //alertAddy()
 
       })();
-    },[ ]);
+    },[ address]);
   //What to put in the brackets to make it updata address whenever the address changes
 
 function alertAddy(){
   alert(JSON.stringify(address))
 }    
     
- console.log(address, "console.log")
+ //console.log(address, "console.log")
 
     let text = 'Waiting..';
     if (errorMsg) {
@@ -86,7 +85,7 @@ function alertAddy(){
         ]
       };
 //check to make sure it is not null
-  
+   
     return (
         
        

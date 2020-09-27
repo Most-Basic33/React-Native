@@ -1,6 +1,6 @@
 const initialState = {
     user: {},
-    location:{}
+    location: {}
 }
 
 const GET_USER = 'GET_USER';
@@ -32,8 +32,8 @@ export default function reducer(state = initialState, action) {
             console.log(payload)
             return {...state, user: payload}
                 case GET_LOCATION:
-                    console.log(payload)
-                    return {...state, location:payload}
+                    console.log(payload, "REDUX REDUCER")
+                    return {...state, location: payload}
             default:
                 return state
     }
