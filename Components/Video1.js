@@ -112,12 +112,21 @@ const joinSucess = () => {
 }
 //Attempted to send video thru sockets
 const sendVideo = () =>{
+  let local = props.location.coords;
+  console.log(local, 'local')
   if(roomID.length < 1){ 
     alert('must join room' )
     return
   }
- socket.emit('message sent', {videos, roomID}) 
-console.log('hit')
+  if(videos.length>1){
+
+    socket.emit('message sent', {videos, roomID}) 
+   console.log('hit')
+  }  if(videos.length<1){
+    socket.emit('another message', {local, roomID}) 
+    console.log('hit')
+  }
+  
 
 }
 //Attempted to send message through sockets
@@ -148,9 +157,9 @@ setReceivedVid(true)
         )
     })
     
-    const alertAddy=()=>{
-      alert(props.location.coords.latitude)
-    }
+    // const alertAddy=()=>{
+    //   alert(props.location.coords.latitude)
+    // }
 
 
 // useEffect(()=>{
@@ -199,7 +208,7 @@ return(
     value={message}
     onChangeText={(text) => setMessage(text)}
 />
-<Button title='location' onPress={()=>alertAddy()} />
+<Button title='location' />
 
 <Button onPress={() => sendVideo()} title='send Video' />
 
