@@ -16,6 +16,7 @@ import * as VideoThumbnails from 'expo-video-thumbnails';
 
 let socket;
 let url = `http://192.168.0.115:5555/api/`;
+let local;
 
 
 const Video1 = (props) =>{
@@ -27,6 +28,7 @@ const Video1 = (props) =>{
     const [roomID, setRoomID] = useState([])
     const [joined, setJoined] = useState(false)
     const [name, setName] = useState('')
+    const [receivedLocal, setReceivedLocal] = useState([])
   //Camera only
     const [hasPermission, setHasPermission] = useState(null);
     const [type, setType] = useState(Camera.Constants.Type.back);
@@ -34,7 +36,7 @@ const Video1 = (props) =>{
     const [recording, setRecording] = useState(false)
     const [videos, setVideo] = useState([])//I get invalid prop type unless i set this to null but then I get other problems
     const [photos, setPhotos] = useState(null)
-
+//const [local, setLocal] = useState([])
      const [playVid, setPlayVid] = useState('')
  const[recveidVid, setReceivedVid] = useState(false)
     let mapped = []
@@ -57,22 +59,27 @@ socket.on('message from server', message => {
 
 },[])
 
-console.log(videos.length,'video')
+//console.log(videos.length,'video')
  
 //Attempted useEffect to receive Videos
 useEffect(()=>{
 socket.on('message data', videos=> {
   setReceivedVideo(receivedVideo => [...receivedVideo, videos])
 })
+local= props.location.coords;
+//console.log(local, 'local')
+//props.location.coords >1?setLocal(props.location.coords):null 
+socket.on('message data', local =>{
+  setReceivedLocal(receivedLocal => [...receivedLocal, local])
+})
+console.log(receivedLocal, 'received LOCAL')
+},[local])
 
-
-},[])
-console.log(receivedVideo, 'received')
 useEffect(()=>{
-setRoom(room)
-
+  setRoom(room)
+  
 },[room])
- 
+
 // useEffect(()=>{
 // if(videos ===  ''){
 // setVideo(null)
@@ -112,8 +119,7 @@ const joinSucess = () => {
 }
 //Attempted to send video thru sockets
 const sendVideo = () =>{
-  let local = props.location.coords;
-  console.log(local, 'local')
+ // console.log(local, 'local')
   if(roomID.length < 1){ 
     alert('must join room' )
     return
