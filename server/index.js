@@ -140,11 +140,11 @@ app.use(session({
 
     })
     socket.on('another message',({ local, roomID}) => {
-      console.log(local, roomID)
+      console.log(local, roomID, "backend")
       
      // socket.broadcast.emit('message dispatched', data.message);
      if(!roomID && !roomID.rooms && !roomID.rooms[1]) return;
-       io.in(roomID.rooms[1]).emit('message data', { local});
+       io.in(roomID.rooms[1]).emit('message info', { local});
 
     })
    

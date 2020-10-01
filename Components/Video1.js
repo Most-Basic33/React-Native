@@ -7,6 +7,8 @@ import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
 //import Thumb from './Thumb'
 import * as VideoThumbnails from 'expo-video-thumbnails';
+import * as Location from 'expo-location';
+
  import { Video } from 'expo-av';
  import {connect} from 'react-redux'
  import axios from 'axios'
@@ -16,7 +18,7 @@ import * as VideoThumbnails from 'expo-video-thumbnails';
 
 let socket;
 let url = `http://192.168.0.115:5555/api/`;
-let local;
+let local, lat, long;
 
 
 const Video1 = (props) =>{
@@ -39,6 +41,7 @@ const Video1 = (props) =>{
 //const [local, setLocal] = useState([])
      const [playVid, setPlayVid] = useState('')
  const[recveidVid, setReceivedVid] = useState(false)
+ const [friendAddy, setFriendAddy] = useState([])
     let mapped = []
    
 // End of Camera code
@@ -66,19 +69,71 @@ useEffect(()=>{
 socket.on('message data', videos=> {
   setReceivedVideo(receivedVideo => [...receivedVideo, videos])
 })
-local= props.location.coords;
+
 //console.log(local, 'local')
 //props.location.coords >1?setLocal(props.location.coords):null 
-socket.on('message data', local =>{
-  setReceivedLocal(receivedLocal => [...receivedLocal, local])
-})
-console.log(receivedLocal, 'received LOCAL')
+
+
+},[ ])
+
+useEffect(() =>{
+  local= props.location.coords;
+  socket.on('message info', local =>{
+    console.log(local,'local')
+    setReceivedLocal(receivedLocal => [...receivedLocal, local ])
+  })
+  lat = local.latitude,
+  long = local.longitude;
+
+  console.log(lat, long, 'front end')
+  console.log(receivedLocal, 'received LOCAL')
+
 },[local])
+
+//async useeffect to get address from received lat/long
+// useEffect(()=>{
+// (async () =>{
+// let addy =  await Location.reverseGeocodeAsync({latitude:+lat, longitude:+long})
+// //setFriendAddy(addy)
+// console.log(addy)
+// //friendAddy.length > 1?alert(friendAddy):null
+// })()
+// },[])
+
+useEffect(() => {
+  (async () => {
+    // let { status } = await Location.requestPermissionsAsync();
+    // if (status !== 'granted') {
+    //   setErrorMsg('Permission to access location was denied');
+    // }
+
+//    let  location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.BestForNavigation});
+//     setLocation(location);
+//     props.getLocation(location)
+//  setLat(+location?.coords.latitude)
+// setLong(+location?.coords.longitude)
+// setLatLng({lat, long})
+ if(receivedLocal){
+  let addy =  await Location.reverseGeocodeAsync({latitude:+lat, longitude:+long})
+  setFriendAddy(addy)
+  console.log(addy)
+  friendAddy.length > 1?alert(friendAddy):null
+  
+ }
+
+// let address = await Location.reverseGeocodeAsync({latitude:+lat, longitude:+long})
+// setAddress(address)
+// console.log(address)
+//alertAddy()
+
+  })();
+},[friendAddy]);
 
 useEffect(()=>{
   setRoom(room)
   
 },[room])
+
 
 // useEffect(()=>{
 // if(videos ===  ''){
@@ -171,7 +226,7 @@ setReceivedVid(true)
 // useEffect(()=>{
 // props.location?alert(props.location):null
 // },[props.location])
-console.log(props, "VIDEO!!!")
+//console.log(props, "VIDEO!!!")
 return(
 <View style={styles.container}>
 <TextInput 
