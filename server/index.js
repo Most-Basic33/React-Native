@@ -5,6 +5,7 @@ session = require('express-session'),
 auth = require('./authController'),
 {SESSION_SECRET, CONNECTION_STRING, SERVER_PORT} = process.env,
 massive = require('massive'),
+fs = require('fs'),
 app = express();
 
 const bodyParser = require('body-parser'),
@@ -136,12 +137,17 @@ app.use(session({
      // socket.broadcast.emit('message dispatched', data.message);
      if(!roomID && !roomID.rooms && !roomID.rooms[1]) return;
        io.in(roomID.rooms[1]).emit('message data', { videos});
+
     })
-  
+    socket.on('another message',({ local, roomID}) => {
+      console.log(local, roomID, "backend")
+      
+     // socket.broadcast.emit('message dispatched', data.message);
+     if(!roomID && !roomID.rooms && !roomID.rooms[1]) return;
+       io.in(roomID.rooms[1]).emit('message info', { local});
+
+    })
    
-    // socket.on('message sent', data => {
-    //   io.to(data.room).emit('message data', data);
-    // })
     
     socket.on('disconnect', () => {
       console.log('User Disconnected');
@@ -166,3 +172,4 @@ massive({
 app.post(`/api/register/`, auth.register)
 app.post(`/api/login`, auth.login)
 app.get(`/api/users/`, auth.getUsers)
+app.get('/api/me', auth.logMeIn)

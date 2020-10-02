@@ -1,4 +1,4 @@
-insert into uber_clone(
+insert into accounts(
 email, password
 )values(
 $1, $2

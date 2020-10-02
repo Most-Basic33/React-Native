@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, requireNativeComponent } from 'react-native';
 import axios from 'axios'
+import {connect} from 'react-redux'
+import {getUser} from './../redux/videoReducer'
 
-export default function Register({ navigation }) {
+
+ function Register({ navigation }) {
   let url = `http://192.168.0.115:5555/api/`
 
   const [email, setEmail] = useState('')
@@ -11,7 +14,7 @@ export default function Register({ navigation }) {
   console.log(password, 'password')
 
   useEffect(() => {
-
+//console.log(props)
   }, [])
  
 
@@ -20,8 +23,9 @@ export default function Register({ navigation }) {
     let body = { email, password }
     // console.log(body)
     axios.post(`${url}register`, body)
-      .then(() => {
-        navigation.navigate('Landing')
+      .then((res) => {
+       getUser(res.data)
+        navigation.navigate('Video')
         console.log('done')
       })
       .catch(err => {
@@ -55,6 +59,8 @@ export default function Register({ navigation }) {
     </View>
   );
 }
+
+export default connect(null,{getUser})(Register)
 
 const styles = StyleSheet.create({
   container: {

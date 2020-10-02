@@ -7,20 +7,30 @@ import * as Permissions from 'expo-permissions';
 import * as Contacts from 'expo-contacts';
 //import Thumb from './Thumb'
 import * as VideoThumbnails from 'expo-video-thumbnails';
+import * as Location from 'expo-location';
+
  import { Video } from 'expo-av';
+ import {connect} from 'react-redux'
+ import axios from 'axios'
+ import {getUser} from './../redux/videoReducer'
 
 
 
 let socket;
+let url = `http://192.168.0.115:5555/api/`;
+let local, lat, long;
 
-const Video1 = ({navigation}) =>{
+
+const Video1 = (props) =>{
+
     const [message, setMessage] = useState('')
     const [receivedMessages, setReceivedMessages] = useState([])
     const[receivedVideo, setReceivedVideo] = useState([])
     const [room, setRoom] = useState(null)
     const [roomID, setRoomID] = useState([])
     const [joined, setJoined] = useState(false)
-    const [name, setName] =useState('')
+    const [name, setName] = useState('')
+    const [receivedLocal, setReceivedLocal] = useState([])
   //Camera only
     const [hasPermission, setHasPermission] = useState(null);
     const [type, setType] = useState(Camera.Constants.Type.back);
@@ -28,15 +38,22 @@ const Video1 = ({navigation}) =>{
     const [recording, setRecording] = useState(false)
     const [videos, setVideo] = useState([])//I get invalid prop type unless i set this to null but then I get other problems
     const [photos, setPhotos] = useState(null)
-
-     
-
+//const [local, setLocal] = useState([])
+     const [playVid, setPlayVid] = useState('')
+ const[recveidVid, setReceivedVid] = useState(false)
+ const [friendAddy, setFriendAddy] = useState([])
     let mapped = []
    
 // End of Camera code
+useEffect(()=>{
+axios.get(`${url}me`).then((res)=>{
+  console.log(res.data)
+  props.getUser(res.data)
+})
+},[])
 
 useEffect(()=>{
-    socket = io(`http://192.168.0.115:5555`)
+   socket = io(`http://192.168.0.115:5555`)
  // socket = io.connect()
 socket.on('message from server', message => {
    setReceivedMessages(receivedMessages => [...receivedMessages, message])
@@ -45,24 +62,92 @@ socket.on('message from server', message => {
 
 },[])
 
-console.log(videos.length,'video')
+//console.log(videos.length,'video')
  
 //Attempted useEffect to receive Videos
 useEffect(()=>{
 socket.on('message data', videos=> {
   setReceivedVideo(receivedVideo => [...receivedVideo, videos])
 })
-console.log(receivedVideo, 'received')
+
+//console.log(local, 'local')
+//props.location.coords >1?setLocal(props.location.coords):null 
 
 
+},[ ])
 
-},[])
- 
+useEffect(() =>{
+  local= props.location.coords;
+  console.log(local,'local');
+  socket.on('message info', local =>{
+    
+    
+    // lat = local.latitude,
+    // long = local.longitude;
+
+    // console.log(lat, long, 'front end')
+    // console.log(receivedLocal, 'received LOCAL')
+ //setReceivedLocal(receivedLocal)
+    setReceivedLocal(receivedLocal => [...receivedLocal, local ])
+  })
+  
+  
+},[local])
+console.log(receivedLocal, 'recevied local front end' )
+
+console.log()
+
+lat = receivedLocal.local
+console.log(lat)
+long = receivedLocal.latitude;
+
+console.log(lat, long)
+//async useeffect to get address from received lat/long
+// useEffect(()=>{
+// (async () =>{
+// let addy =  await Location.reverseGeocodeAsync({latitude:+lat, longitude:+long})
+// //setFriendAddy(addy)
+// console.log(addy)
+// //friendAddy.length > 1?alert(friendAddy):null
+// })()
+// },[])
+
+// useEffect(() => {
+//   (async () => {
+    // let { status } = await Location.requestPermissionsAsync();
+    // if (status !== 'granted') {
+    //   setErrorMsg('Permission to access location was denied');
+    // }
+
+//    let  location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.BestForNavigation});
+//     setLocation(location);
+//     props.getLocation(location)
+//  setLat(+location?.coords.latitude)
+// setLong(+location?.coords.longitude)
+// setLatLng({lat, long})
+// 
+//  if(receivedLocal){
+//   let addy =  await Location.reverseGeocodeAsync({latitude:+lat, longitude:+long})
+//   setFriendAddy(addy)
+//   console.log(addy)
+//   friendAddy.length > 1?alert(friendAddy):null
+  
+//  }
+
+// let address = await Location.reverseGeocodeAsync({latitude:+lat, longitude:+long})
+// setAddress(address)
+// console.log(address)
+// alertAddy()
+
+//   })();
+// },[]);
+
 useEffect(()=>{
-setRoom(room)
-
+  setRoom(room)
+  
 },[room])
- 
+
+
 // useEffect(()=>{
 // if(videos ===  ''){
 // setVideo(null)
@@ -96,18 +181,34 @@ const joinRoom = () => {
     
 }
 
+
 const joinSucess = () => {
     setJoined(true)
 }
 //Attempted to send video thru sockets
 const sendVideo = () =>{
- socket.emit('message sent', {videos, roomID}) 
-console.log('hit')
+ // console.log(local, 'local')
+  if(roomID.length < 1){ 
+    alert('must join room' )
+    return
+  }
+  if(videos.length>1){
+
+    socket.emit('message sent', {videos, roomID}) 
+   console.log('hit')
+  }  if(videos.length<1){
+    socket.emit('another message', {local, roomID}) 
+    console.log('hit')
+  }
+  
 
 }
 //Attempted to send message through sockets
 const sendMessage = () => {
-
+if(roomID.length < 1){ 
+  alert('must join room' )
+  return
+}
 message?socket.emit('message', {name,message, roomID}):null
 console.log('hit')
 }
@@ -115,9 +216,12 @@ console.log('hit')
 //Mapped URI from video object
 
   mapped = String(receivedVideo.map(video=>video.videos))
-  console.log(mapped )
+  console.log(mapped)
 
-  
+  const playVideo=()=>{
+setPlayVid(mapped)
+setReceivedVid(true)
+  }
     const mappedMessages = receivedMessages.map((message, index) =>{
         return(
             <View key={index}> 
@@ -126,10 +230,21 @@ console.log('hit')
             </View>
         )
     })
+    
+    // const alertAddy=()=>{
+    //   alert(props.location.coords.latitude)
+    // }
+
+
+// useEffect(()=>{
+// props.location?alert(props.location):null
+// },[props.location])
+//console.log(props, "VIDEO!!!")
 return(
 <View style={styles.container}>
 <TextInput 
     clearButtonMode='always'
+    placeholder='Choose Room'
     style={styles.textInput}
     value={room}
     onChangeText={(text) => setRoom(text)}
@@ -142,11 +257,15 @@ return(
     placeholder='Enter Name'
     onChangeText={(text) => setName(text)}
 />
- 
+<View style={{backgroundColor:recveidVid?'blue':'red'}}>
+<Text>Play Vidz</Text>
+ <Button
+  onPress={()=>playVideo()} title='play Vidz'/>
+</View>
 <ScrollView>{mappedMessages}
  
-{/* <Video
-  source={{  uri: mapped}}
+<Video
+  source={{  uri: playVid}}
   rate={1.0}
   volume={1.0}
   isMuted={false}
@@ -155,17 +274,19 @@ return(
   isLooping
   useNativeControls={true}
   style={{ width: 300, height: 300  }}
-/> */}
-<Text  style={{fontSize:20, padding:10}} onPress={()=>navigation.navigate('Landing')} >Click for maps</Text>
+/>
+<Text  style={{fontSize:20, padding:10}} onPress={()=>props.navigation.navigate('Landing')} >Click for maps</Text>
 <TextInput 
     clearButtonMode='always'
     style={styles.textInput}
     value={message}
     onChangeText={(text) => setMessage(text)}
 />
+<Button title='location' />
+
 <Button onPress={() => sendVideo()} title='send Video' />
 
-<Button onPress={() => sendMessage()} title='send message'  style={{gap:10}}/>
+<Button onPress={() => sendMessage()} title='send message' style={{gap:10}}/>
 <View style={{ flex: 1 }}>
       <Camera 
       ref={ref => {
@@ -261,7 +382,7 @@ return(
     </View>
  
     <Video
-  source={{  uri: videos }}
+  src={{  uri: videos }}
   rate={1.0}
   volume={1.0}
   isMuted={false}
@@ -284,6 +405,7 @@ return(
 //         let re = await camera.recordAsync()
 //     }
 // }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -314,4 +436,22 @@ const styles = StyleSheet.create({
       
     }
 })
-export default Video1
+
+const mapStateToProps = state => {
+ console.log(state.user)
+  return{
+    user: state.user,
+    location: state.location
+  }
+}
+// };
+// const mapStateToProps = (state) => {
+//   const { user } = state
+//   return { user }
+// };
+   
+   
+
+
+export default connect(mapStateToProps,{getUser})(Video1)
+

@@ -1,2 +1,2 @@
-select * from uber_clone
+select * from accounts
 where email = $1;
