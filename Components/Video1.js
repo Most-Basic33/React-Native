@@ -78,18 +78,30 @@ socket.on('message data', videos=> {
 
 useEffect(() =>{
   local= props.location.coords;
+  console.log(local,'local');
   socket.on('message info', local =>{
-    console.log(local,'local')
+    
+    
+    // lat = local.latitude,
+    // long = local.longitude;
+
+    // console.log(lat, long, 'front end')
+    // console.log(receivedLocal, 'received LOCAL')
+ //setReceivedLocal(receivedLocal)
     setReceivedLocal(receivedLocal => [...receivedLocal, local ])
   })
-  lat = local.latitude,
-  long = local.longitude;
-
-  console.log(lat, long, 'front end')
-  console.log(receivedLocal, 'received LOCAL')
-
+  
+  
 },[local])
+console.log(receivedLocal, 'recevied local front end' )
 
+console.log()
+
+lat = receivedLocal.local
+console.log(lat)
+long = receivedLocal.latitude;
+
+console.log(lat, long)
 //async useeffect to get address from received lat/long
 // useEffect(()=>{
 // (async () =>{
@@ -100,8 +112,8 @@ useEffect(() =>{
 // })()
 // },[])
 
-useEffect(() => {
-  (async () => {
+// useEffect(() => {
+//   (async () => {
     // let { status } = await Location.requestPermissionsAsync();
     // if (status !== 'granted') {
     //   setErrorMsg('Permission to access location was denied');
@@ -113,21 +125,22 @@ useEffect(() => {
 //  setLat(+location?.coords.latitude)
 // setLong(+location?.coords.longitude)
 // setLatLng({lat, long})
- if(receivedLocal){
-  let addy =  await Location.reverseGeocodeAsync({latitude:+lat, longitude:+long})
-  setFriendAddy(addy)
-  console.log(addy)
-  friendAddy.length > 1?alert(friendAddy):null
+// 
+//  if(receivedLocal){
+//   let addy =  await Location.reverseGeocodeAsync({latitude:+lat, longitude:+long})
+//   setFriendAddy(addy)
+//   console.log(addy)
+//   friendAddy.length > 1?alert(friendAddy):null
   
- }
+//  }
 
 // let address = await Location.reverseGeocodeAsync({latitude:+lat, longitude:+long})
 // setAddress(address)
 // console.log(address)
-//alertAddy()
+// alertAddy()
 
-  })();
-},[friendAddy]);
+//   })();
+// },[]);
 
 useEffect(()=>{
   setRoom(room)
@@ -203,7 +216,7 @@ console.log('hit')
 //Mapped URI from video object
 
   mapped = String(receivedVideo.map(video=>video.videos))
-  console.log(mapped )
+  console.log(mapped)
 
   const playVideo=()=>{
 setPlayVid(mapped)
